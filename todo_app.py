@@ -21,19 +21,21 @@ class TodoApp:
         self.root = root
         self.root.title("✨ Sevimli To-Do List ✨")
         self.root.geometry("600x700")
-        # Pembe gradient arka plan
-        self.root.configure(bg="#ffd1dc")  # Açık pembe
+        
+        # Arka plan rengi
+        self.root.configure(bg="#fce4ec")  # Açık pembe
 
         # Veritabanı bağlantısı
         self.conn = sqlite3.connect('todo.db')
         self.create_table()
 
-        # Canvas oluştur - gradient efekti için
-        self.canvas = tk.Canvas(root, highlightthickness=0)
+        # Canvas oluştur
+        self.canvas = tk.Canvas(root, bg="#fce4ec", highlightthickness=0)
         self.canvas.place(relwidth=1, relheight=1)
-        
-        # Gradient arka plan oluştur
-        self.create_gradient("#ffb6c1", "#ffd1dc")  # Koyu pembeden açık pembeye
+
+        # Ana container
+        self.main_frame = ttk.Frame(root)
+        self.main_frame.place(relx=0.5, rely=0.1, anchor="n")  # Üstte konumlandır
 
         # Bulutlar ve ışıltılar için listeler
         self.clouds = []
@@ -57,10 +59,6 @@ class TodoApp:
             x = random.randint(0, 600)
             y = random.randint(0, 700)
             self.create_star(x, y)
-
-        # Ana container - pembe tonlarında
-        self.main_frame = ttk.Frame(root, style="Card.TFrame")
-        self.main_frame.place(relx=0.5, rely=0.5, anchor="center")
 
         # Stil tanımlamaları
         style = ttk.Style()
@@ -263,17 +261,17 @@ class TodoApp:
             'shapes': []
         }
         
-        # Bulut şeklini daha belirgin yap
-        cloud_color = "#ff69b4"  # Canlı pembe bulutlar
-        sizes = [(40, 30), (50, 40), (45, 35)]
+        # Bulutları daha belirgin yap
+        cloud_color = "#ff8da1"  # Daha belirgin pembe
+        sizes = [(60, 45), (75, 60), (65, 50)]  # Daha büyük bulutlar
         
         for i, (width, height) in enumerate(sizes):
             shape = self.canvas.create_oval(
-                x + i*25, y,
-                x + width + i*25, y + height,
+                x + i*35, y,
+                x + width + i*35, y + height,
                 fill=cloud_color,
                 outline=cloud_color,
-                width=2
+                width=3
             )
             cloud['shapes'].append(shape)
         
