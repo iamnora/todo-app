@@ -19,17 +19,21 @@ def resource_path(relative_path):
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("✨To-Do List ✨")
+        self.root.title("✨ Sevimli To-Do List ✨")
         self.root.geometry("600x700")
-        self.root.configure(bg="#fce4ec")  # Açık pembe arka plan
+        # Pembe gradient arka plan
+        self.root.configure(bg="#ffd1dc")  # Açık pembe
 
         # Veritabanı bağlantısı
         self.conn = sqlite3.connect('todo.db')
         self.create_table()
 
-        # Canvas oluştur
-        self.canvas = tk.Canvas(root, bg="#fce4ec", highlightthickness=0)
+        # Canvas oluştur - gradient efekti için
+        self.canvas = tk.Canvas(root, highlightthickness=0)
         self.canvas.place(relwidth=1, relheight=1)
+        
+        # Gradient arka plan oluştur
+        self.create_gradient("#ffb6c1", "#ffd1dc")  # Koyu pembeden açık pembeye
 
         # Bulutlar ve ışıltılar için listeler
         self.clouds = []
@@ -54,7 +58,7 @@ class TodoApp:
             y = random.randint(0, 700)
             self.create_star(x, y)
 
-        # Ana container - hafif şeffaf beyaz arka plan
+        # Ana container - pembe tonlarında
         self.main_frame = ttk.Frame(root, style="Card.TFrame")
         self.main_frame.place(relx=0.5, rely=0.5, anchor="center")
 
@@ -72,7 +76,7 @@ class TodoApp:
         # Container için arka plan ve gölge efekti
         container_frame = tk.Frame(
             self.main_frame,
-            bg="#ffffff",
+            bg="white",
             padx=30,
             pady=30,
             highlightbackground="#ffb6c1",
@@ -80,21 +84,24 @@ class TodoApp:
         )
         container_frame.pack(padx=20, pady=20)
         
+        # Container'a hafif gölge efekti
+        self.add_shadow(container_frame)
+        
         # Başlık
-        title_frame = tk.Frame(container_frame, bg="#ffffff")
+        title_frame = tk.Frame(container_frame, bg="white")
         title_frame.pack(pady=20)
         
         title_label = tk.Label(
             title_frame,
             text="✨ Yapılacaklar Listem ✨",
             font=("Helvetica", 24, "bold"),
-            fg="#ff69b4",
-            bg="#ffffff"
+            fg="#ff69b4",  # Canlı pembe
+            bg="white"
         )
         title_label.pack()
 
         # Giriş alanı
-        self.input_frame = tk.Frame(container_frame, bg="#ffffff")
+        self.input_frame = tk.Frame(container_frame, bg="white")
         self.input_frame.pack(fill=tk.X, pady=20)
 
         self.task_entry = tk.Entry(
@@ -122,7 +129,7 @@ class TodoApp:
             text="Ekle 🌸",
             command=self.add_task,
             font=("Helvetica", 12),
-            bg="#ff69b4",
+            bg="#ff69b4",  # Canlı pembe
             fg="white",
             relief=tk.FLAT,
             padx=20,
@@ -132,7 +139,7 @@ class TodoApp:
         self.add_button.pack(side=tk.RIGHT)
 
         # Görev listesi
-        self.task_frame = tk.Frame(container_frame, bg="#ffffff")
+        self.task_frame = tk.Frame(container_frame, bg="white")
         self.task_frame.pack(fill=tk.BOTH, expand=True, pady=20)
 
         # Scrollbar
@@ -144,10 +151,10 @@ class TodoApp:
             self.task_frame,
             font=("Helvetica", 12),
             selectmode=tk.SINGLE,
-            bg="#fff5f7",  # Çok açık pembe
+            bg="white",
             fg="#333333",
-            selectbackground="#ff69b4",
-            selectforeground="white",
+            selectbackground="#e2b6ff",  # Açık mor seçim
+            selectforeground="#333333",
             relief=tk.FLAT,
             highlightthickness=1,
             highlightbackground="#ffb6c1",
@@ -157,12 +164,12 @@ class TodoApp:
         self.scrollbar.config(command=self.task_listbox.yview)
 
         # Butonlar
-        self.button_frame = tk.Frame(container_frame, bg="#ffffff")
+        self.button_frame = tk.Frame(container_frame, bg="white")
         self.button_frame.pack(fill=tk.X, pady=20)
 
         button_style = {
             "font": ("Helvetica", 12),
-            "bg": "#ff69b4",
+            "bg": "#ff69b4",  # Canlı pembe
             "fg": "white",
             "relief": tk.FLAT,
             "padx": 15,
@@ -256,11 +263,10 @@ class TodoApp:
             'shapes': []
         }
         
-        # Bulut şeklini daha büyük ve belirgin yap
-        cloud_color = "#ff8fab"  # Daha canlı bir pembe tonu
-        sizes = [(40, 30), (50, 40), (45, 35)]  # Farklı boyutlarda daireler
+        # Bulut şeklini daha belirgin yap
+        cloud_color = "#ff69b4"  # Canlı pembe bulutlar
+        sizes = [(40, 30), (50, 40), (45, 35)]
         
-        # Ana bulut şekli
         for i, (width, height) in enumerate(sizes):
             shape = self.canvas.create_oval(
                 x + i*25, y,
@@ -304,7 +310,7 @@ class TodoApp:
             'size': size,
             'shape': self.canvas.create_polygon(
                 points,
-                fill="#ff69b4",
+                fill="#ff69b4",  # Pembe yıldızlar
                 outline="",
                 smooth=True
             )
@@ -318,7 +324,7 @@ class TodoApp:
             'angle': random.uniform(0, 2*math.pi),
             'scale': random.uniform(0.5, 1.0),
             'speed': random.uniform(0.02, 0.05),
-            'color': random.choice(["#ff69b4", "#ffb6c1", "#ff1493"])  # Farklı pembe tonları
+            'color': random.choice(["#ff69b4", "#ff8da1", "#ffb6c1"])  # Pembe tonları
         }
         
         size = random.uniform(3, 8)  # Farklı boyutlarda ışıltılar
@@ -399,6 +405,32 @@ class TodoApp:
             )
         
         self.root.after(40, self.animate_stars)
+
+    def create_gradient(self, color1, color2):
+        """Gradient arka plan oluştur"""
+        height = 700
+        width = 600
+        
+        for i in range(height):
+            # Renk interpolasyonu
+            r1, g1, b1 = int(color1[1:3], 16), int(color1[3:5], 16), int(color1[5:7], 16)
+            r2, g2, b2 = int(color2[1:3], 16), int(color2[3:5], 16), int(color2[5:7], 16)
+            
+            ratio = i / height
+            r = int(r1 * (1 - ratio) + r2 * ratio)
+            g = int(g1 * (1 - ratio) + g2 * ratio)
+            b = int(b1 * (1 - ratio) + b2 * ratio)
+            
+            color = f'#{r:02x}{g:02x}{b:02x}'
+            self.canvas.create_line(0, i, width, i, fill=color)
+
+    def add_shadow(self, widget):
+        """Widget'a gölge efekti ekle"""
+        shadow = tk.Frame(widget.master)
+        shadow.configure(bg='#e0e0e0')  # Gölge rengi
+        shadow.place(x=widget.winfo_x()+2, y=widget.winfo_y()+2, 
+                    width=widget.winfo_width(), height=widget.winfo_height())
+        widget.lift()  # Widget'ı gölgenin üzerine getir
 
     def __del__(self):
         self.conn.close()
